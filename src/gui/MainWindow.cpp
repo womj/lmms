@@ -565,6 +565,16 @@ SubWindow* MainWindow::addWindowedWidget(QWidget *w, Qt::WindowFlags windowFlags
 		QSize delta(2* frameWidth, titleBarHeight + frameWidth);
 		win->resize(delta + w->sizeHint());
 	}
+	// Prevent the window from being dragged/floated out of the main view
+	// Remove Window flag, ensure SubWindow flag, and disable maximize/minimize/close if needed
+	Qt::WindowFlags flags = win->windowFlags();
+	flags &= ~Qt::Window;
+	flags |= Qt::SubWindow;
+	flags &= ~Qt::WindowMaximizeButtonHint;
+	flags &= ~Qt::WindowMinimizeButtonHint;
+	win->setWindowFlags(flags | Qt::CustomizeWindowHint);
+	// Optionally, disable the context menu (right-click on title bar)
+	win->setContextMenuPolicy(Qt::NoContextMenu);
 	m_workspace->addSubWindow(win);
 	return win;
 }
